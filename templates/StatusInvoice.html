@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% include 'upload.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% block content %}
+
+           <table >
+                <table >
+                <tr style="text-align: center">
+                    <th>Дата</th>
+                    <th>Номер заказа</th>
+                    <th>Контрагент</th>
+                    <th>Счёт</th>
+                    <th>Действие</th>
+                </tr>
+                {% for orders in order %}
+                    {% if orders.Status == 'Ожидание счёта' %}
+                <tr id="tablestyle">
+                    <td>{{ orders.date }}</td>
+                        {% if orders.number == 'б/н' %}
+                            <td>
+                            <form action="{% url 'upload_number' orders.id %}"  method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                                <input id="number" type="text" name="number">
+                                <button type="submit" class="btn btn-danger">обновить</button>
+                            </form>
+                            </td>
+                        {% else %}
+                           <td><a href="{% url 'items' orders.id %}">{{ orders.number }}</a></td>
+                        {% endif %}
+                    <td><a href="{% url 'supplier' orders.Supplier.id %}" target="_blank">{{ orders.Supplier }}</a></td>
+                    <td>
+                        <form id='invoice' action="{% url 'upload_invoice' orders.id %}"  method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input id="invoice" type="file" name="invoice">
+                            <button type="submit" class="btn btn-danger">Загрузить</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'delete_order' orders.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="background: transparent; border: transparent;"><img src="../static/icons/6407026.png" width="25px" height="25px"></button>
+                        </form>
+                        <form action="{% url 'order_update' orders.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="background: transparent; border: transparent"><img src="../static/icons/1827951.png" width="25px" height="25px"></button>
+                        </form>
+                    </td>
+                </tr>
+                    {% endif %}
+                {% endfor %}
+
+
+            </table>
+    {% endblock %}
+    </table>
+</body>
+</html>

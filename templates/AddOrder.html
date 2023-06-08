@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="itemModalLabel">Новое наименование</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'add_item' %}">
+            {% csrf_token %}
+            <table>
+            {{ item_form.as_table }}
+            </table>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </div>
+        </form>
+    </div>
+  </div>
+</div>
+</div>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Новый контрагент</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Новая категория</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post" action="{% url 'add_category' %}">
+                        {% csrf_token %}
+                        <table>
+                        {{ cat_form.as_table }}
+                        </table>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                  </div>
+                    </form>
+                </div>
+              </div>
+            </div>
+      </div>
+        <form method="post" action="{% url 'add_supplier' %}">
+            {% csrf_token %}
+            <table>
+                {{ sup_form.as_table }}
+            </table>
+
+      <div class="modal-footer">
+          <a href="" data-toggle="modal" data-target="#ModalCenter" class="btn btn-primary">Новая категория</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</div>
+<form class="form-horizontal"  style="position: center" method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+        <table>
+            {{order_form.as_table}}
+            <td colspan="2">
+                <a href="" data-toggle="modal" data-target="#exampleModalCenter" style="color: white; width: 165px" class="btn btn-group btn-primary">Новый контрагент</a>
+                <a href="" data-toggle="modal" data-target="#itemModal" style="color: white; width: 190px" class="btn btn-group btn-primary">Новое наименование</a>
+                <button type="submit" style=" width: 152px" class="btn btn-group btn-success">Разместить заказ</button>
+            </td>
+        </table>
+
+{{ formset.management_form }}
+{% for form in formset %}
+<div class=" form-row" style="margin: 0; padding: 0;">
+    <table>
+        <tr>
+            <td>
+                {{ form.as_table}}
+            </td>
+            <td>
+                <button class="btn btn-success add-form-row">+</button>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endfor %}
+
+</form>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script type="text/javascript">
+function updateElementIndex(el, prefix, ndx) {
+    const id_regex = new RegExp('(' + prefix + '-\\d+)');
+    const replacement = prefix + '-' + ndx;
+    if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+    if (el.id) el.id = el.id.replace(id_regex, replacement);
+    if (el.name) el.name = el.name.replace(id_regex, replacement);
+}
+function cloneMore(selector, prefix) {
+    const newElement = $(selector).clone(true);
+    let total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+    newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
+        let name = $(this).attr('name');
+        if(name) {
+            name = name.replace('-' + (total-1) + '-', '-' + total + '-');
+            const id = 'id_' + name;
+            $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+        }
+    });
+    newElement.find('label').each(function() {
+        let forValue = $(this).attr('for');
+        if (forValue) {
+          forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
+          $(this).attr({'for': forValue});
+        }
+    });
+    total++;
+    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+    $(selector).after(newElement);
+    const conditionRow = $('.form-row:not(:last)');
+    conditionRow.find('.btn.add-form-row')
+    .removeClass('btn-success').addClass('btn-danger')
+    .removeClass('add-form-row').addClass('remove-form-row')
+    .html('-');
+    return false;
+}
+function deleteForm(prefix, btn) {
+    const total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+    if (total > 1){
+        btn.closest('.form-row').remove();
+        const forms = $('.form-row');
+        $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+        let i = 0, formCount = forms.length;
+        for (; i<formCount; i++) {
+            $(forms.get(i)).find(':input').each(function() {
+                updateElementIndex(this, prefix, i);
+            });
+        }
+    }
+    return false;
+}
+$(document).on('click', '.add-form-row', function(e){
+    e.preventDefault();
+    cloneMore('.form-row:last', 'form');
+    return false;
+});
+$(document).on('click', '.remove-form-row', function(e){
+    e.preventDefault();
+    deleteForm('form', $(this));
+    return false;
+});
+
+</script>
+{% endblock %}

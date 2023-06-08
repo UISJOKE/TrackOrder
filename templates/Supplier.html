@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% block content %}
+            <table >
+                <tr style="text-align: center">
+                    <th>Контрагент</th>
+                    <th>Контактное лицо</th>
+                    <th>Телефон</th>
+                    <th>Сайт</th>
+                    <th>Эл.Почта</th>
+                    <th>Категория</th>
+                </tr>
+                <tr>
+                    <td>{{ supplier.name }}</td>
+                    <td>{{ supplier.contact_name }}</td>
+                    <td>{{ supplier.contact }}</td>
+                    <td><a href="https://www.{{ supplier.website }}">тык</a></td>
+                    <td>{{ supplier.supplier_mail }}</td>
+                    <td>{% for cat in supplier.category.all %}{{ cat }}{% endfor %}</td>
+
+                </tr>
+            </table>
+        <table >
+                <tr style="text-align: center">
+                    <th>Дата</th>
+                    <th>Номер заказа</th>
+                    <th>Счёт</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+            {% for order in supplier.sup_orders.all %}
+                <tr id="tablestyle">
+                    <td>{{ order.date }}</td>
+                    <td><a href="{% url 'items' order.id %}">{{ order.number}}</a></td>
+                    {% if order.invoice != '' %}
+                        <td> <a href="{{ order.invoice.url }}" target="_blank">Счёт</a></td>
+                    {% else %}
+                        <td>
+                            <a href="{% url 'orders_list_invoice' %}">Тут пока ничего... {{ order.invoice }}</a>
+                        </td>
+                    {% endif %}
+                    <td style="text-align: center">
+                        <form action="{% url 'progress' order.id %}" class="d-flex" method="Get">
+                            {% csrf_token %}
+                            {% if order.Status == 'Получено' %}
+                                <button class="btn btn-success" style="display: block; margin: auto;" disabled="disabled" type="submit">{{order.Status}}</button>
+                            {% elif order.Status == 'Ожидание доставки' %}
+                                <button class="btn btn-warning" style="display: block; margin: auto;" type="submit">{{order.Status}}</button>
+                            {% elif order.Status == 'Ожидание счёта' %}
+                                <button class="btn btn-danger" style="display: block; margin: auto;" type="submit">{{order.Status}}</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'delete_order' order.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="background: transparent; border: transparent;"><img src="../static/icons/6407026.png" width="25px" height="25px"></button>
+                        </form>
+                        <form action="{% url 'order_update' order.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="background: transparent; border: transparent"><img src="../static/icons/1827951.png" width="25px" height="25px"></button>
+                        </form>
+                    </td>
+                </tr>
+        {% endfor %}
+        </table>
+    {% endblock %}
+</body>
+</html>

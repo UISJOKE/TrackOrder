@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+    {% block content %}
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+        <table>
+            <thead style="position: relative">
+                <tr style="background-color: white">
+                    <th style=" border: 1px transparent; padding: 3px; background: transparent;"></th>
+                    <th style=" border: 1px transparent; padding: 3px; background: transparent;"></th>
+                    <th style=" border: 1px transparent; padding: 3px; background: transparent;"></th>
+                    <th style=" border: 1px transparent; padding: 3px; background: transparent;"></th>
+                    <th style='text-align: right; background: transparent;padding: 3px;'>Сортировка:</th>
+                    <th colspan="9" style="border-left:0; padding: 3px;  background: transparent;">
+                    <form method="get" >
+                <script>
+
+     function getCookie(name) {
+         const matches = document.cookie.match(new RegExp(
+             "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+         ));
+         return matches ? decodeURIComponent(matches[1]) : undefined
+}
+            function setCookie(name, value, props) {
+    props = props || {}
+                let exp = props.expires;
+                if (typeof exp == "number" && exp) {
+                    const d = new Date();
+                    d.setTime(d.getTime() + exp*1000)
+        exp = props.expires = d
+    }
+    if(exp && exp.toUTCString) { props.expires = exp.toUTCString() }
+
+    value = encodeURIComponent(value)
+                let updatedCookie = name + "=" + value;
+                for(const propName in props){
+        updatedCookie += "; " + propName
+                    const propValue = props[propName];
+                    if(propValue !== true){ updatedCookie += "=" + propValue }
+    }
+    document.cookie = updatedCookie
+
+}
+
+            function fn(){
+                const elem = document.getElementsByName('date')[0];
+                const currentOptionIndex = elem.selectedIndex;
+                setCookie('OptionIndex', currentOptionIndex);
+            }
+
+
+            window.onload=function(){
+                const elem = document.getElementsByName('date')[0];
+                elem.selectedIndex=getCookie('OptionIndex') || 1;
+            }
+        </script>
+                        <label>
+                            <select name="date" class="form-control"  style="width: 200px" onchange='this.form.submit(); fn();'>
+                            <option value="year">За год</option>
+                            <option value="month">За текущий месяц</option>
+                            <option value="week">За 7 дней</option>
+                            <option value="yesterday">Вчера</option>
+                            <option value="today">Сегодня</option>
+                        </select>
+                        </label>
+                    </form>
+                    </th>
+                </tr>
+                </thead>
+
+                <tr style="text-align: center">
+                    <th><button style="border-color: transparent; background: transparent; font-weight: bold">Дата</button></th>
+                    <th><button style="border-color: transparent; background: transparent; font-weight: bold">Номер заказа</button></th>
+                    <th><button style="border-color: transparent; background: transparent; font-weight: bold">Контрагент</button></th>
+                    <th><button style="border-color: transparent; background: transparent; font-weight: bold">Счёт</button></th>
+                    <th><button style="border-color: transparent; background: transparent; font-weight: bold">Статус</button></th>
+                    <th></th>
+
+                </tr>
+                {% for orders in order %}
+                    <tr id="tablestyle" class="first">
+                    <td>{{ orders.date }}</td>
+
+                    <td class="nth-child"><a href="{% url 'items' orders.id %}" >{{ orders.number }}</a></td>
+                    <td><a href="{% url 'supplier' orders.Supplier.id %}" target="_blank">{{ orders.Supplier }}</a></td>
+                    <script>
+                    </script>
+                    {% if orders.order.invoice != '' %}
+                        <td> <a href="{{ orders.invoice }}" target="_blank">Счёт</a></td>
+                    {% else %}
+                        <td><a href="{% url 'orders_list_invoice' %}">Ожидание счёта</a></td>
+                    {% endif %}
+                    <td style="text-align: center">
+                        <form action="{% url 'progress' orders.id %}" class="d-flex" method="Get">
+                            {% csrf_token %}
+                            {% if orders.Status == 'Получено' %}
+                                <button class="btn btn-success" style="display: block; margin: auto;" disabled="disabled" type="submit">{{orders.Status}}</button>
+                            {% elif orders.Status == 'Ожидание оплаты' %}
+                                <button class="btn btn-info" type="submit">{{orders.Status}}</button>
+                            {% elif orders.Status == 'Ожидание доставки' %}
+                                <button class="btn btn-warning" type="submit">{{orders.Status}}</button>
+                            {% elif orders.Status == 'Ожидание счёта' %}
+                                <button class="btn btn-danger" type="submit">{{orders.Status}}</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                    <td >
+                        <form action="{% url 'delete_order' orders.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="background: transparent; border: transparent;"><img src="../static/icons/6407026.png" width="25px" height="25px"></button>
+                        </form>
+                        <form action="{% url 'order_update' orders.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="background: transparent; border: transparent"><img src="../static/icons/1827951.png" width="25px" height="25px"></button>
+                        </form>
+                    </td>
+                {% endfor %}
+            </table>
+
+    {% endblock %}
+</body>
+</html>

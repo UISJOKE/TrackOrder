@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% block content %}
+
+            <table >
+                <tr style="text-align: center">
+                    <th>Дата</th>
+                    <th>Номер заказа</th>
+                    <th>Контрагент</th>
+                    <th>Счёт</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+                {% for orders in order %}
+
+                    {% if orders.Status == 'Ожидание доставки' %}
+                <tr id="tablestyle">
+                    <td>{{ orders.date }}</td>
+                    <td><a href="{% url 'items' orders.id %}">{{ orders.number }}</a></td>
+                    <td><a href="{% url 'supplier' orders.Supplier.id %}" target="_blank">{{ orders.Supplier }}</a></td>
+                    {% if orders.invoice != '' %}
+                        <td> <a href="{{ orders.invoice.url }}" target="_blank">Счёт</a></td>
+                    {% else %}
+                        <td><a href="{% url 'orders_list_invoice' %}">Ожидание счёта</a></td>
+                    {% endif %}
+                    <td style="text-align: center">
+                        <form action="{% url 'progress' orders.id %}" class="d-flex" method="Get">
+                            {% csrf_token %}
+                            <button class="btn btn-warning" style="display: block; margin: auto;" type="submit">{{orders.Status}}</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'delete_order' orders.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="background: transparent; border: transparent;"><img src="../static/icons/6407026.png" width="25px" height="25px"></button>
+                        </form>
+                        <form action="{% url 'order_update' orders.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="background: transparent; border: transparent"><img src="../static/icons/1827951.png" width="25px" height="25px"></button>
+                        </form>
+                    </td>
+                </tr>
+                    {% endif %}
+                {% endfor %}
+
+
+            </table>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+    {% block content %}
+        <table>
+                <tr style="text-align: center">
+                    <th>Дата</th>
+                    <th>Номер заказа</th>
+                    <th>Контрагент</th>
+                    <th>Статус</th>
+{#                    <th>ИТОГО</th>#}
+
+
+
+                </tr>
+                    <tr>
+                        <td>{{ order_info.date }}</td>
+                        <td>{{ order_info.number }}</td>
+                        <td>{{ order_info.Supplier }}</td>
+                        <td>
+                            {% if order_info.Status == 'Получено' %}
+                                <button class="btn btn-success" style="display: block; margin: auto;" disabled="disabled" type="submit">{{order_info.Status}}</button>
+                            {% elif order_info.Status == 'Ожидание оплаты' %}
+                                <button class="btn btn-info" type="submit">{{order_info.Status}}</button>
+                            {% elif order_info.Status == 'Ожидание доставки' %}
+                                <button class="btn btn-warning" type="submit">{{order_info.Status}}</button>
+                            {% elif order_info.Status == 'Ожидание счёта' %}
+                                <button class="btn btn-danger" type="submit">{{order_info.Status}}</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+
+            </table>
+        <table>
+                <tr style="text-align: center">
+                    <th>Наименование</th>
+                    <th>Количество</th>
+                    <th>Цена за шт.</th>
+                    <th>Стоимость</th>
+{#                    <th>ИТОГО</th>#}
+
+
+
+                </tr>
+                {% if order_info.delivery == True %}
+                        <td>Доставка</td>
+                        <td>1</td>
+                        <td>{{ order_info.delivery_cost }}</td>
+                        <td>{{ order_info.delivery_cost }}</td>
+                    {% else %}
+                        <td>Доставка</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                    {% endif %}
+                {% for items in orderitems %}
+                    {% if items.order == order_info %}
+                    <tr>
+                        <td>{{ items.item.name }}</td>
+                        <td>{{ items.count }}</td>
+                        <td>{{ items.item.price }}{{ items.item.currency }}</td>
+                        <td>{{ items.total }}{{ items.item.currency }}</td>
+
+                    </tr>
+                {% endif %}
+                {% endfor %}
+                <td colspan="4" style="text-align: right">
+                    <H3 style="text-decoration: underline">
+                        Итого: {{ order_info.total_price }}
+                    </H3>
+                </td>
+            </table>
+
+    {% endblock %}
+</body>
+</html>

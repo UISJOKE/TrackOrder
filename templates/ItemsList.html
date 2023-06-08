@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <table>
+    <tr>
+        <th style="text-align: center">
+            ID
+        </th>
+        <th style="text-align: center">
+            Наименование
+        </th>
+        <th style="text-align: center">
+            Цена
+        </th>
+        <th></th>
+    </tr>
+        {% for item in items %}
+    <tr>
+            <td>{{ item.id }}</td>
+            <td style="text-align: left; word-wrap: break-word; width: 700px">{{ item.name }}</td>
+            <td>{{ item.price }}{{ item.currency }}</td>
+            <td>
+                <form action="{% url 'delete_item' item.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" style="background: transparent; border: transparent;"><img src="../static/icons/6407026.png" width="25px" height="25px"></button>
+                </form>
+                <form action="{% url 'item_update' item.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" style="background: transparent; border: transparent"><img src="../static/icons/1827951.png" width="25px" height="25px"></button>
+                </form>
+            </td>
+    </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}

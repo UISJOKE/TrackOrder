@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <table>
+        <tr>
+            <th>
+                Наименование
+            </th>
+            <th>
+                Остаток
+            </th>
+            <th>
+
+            </th>
+            <th>
+                Цена
+            </th>
+        </tr>
+        {% for item in stockitem_list %}
+            <form action="{% url 'update_stock' item.id%}" method="post">
+            {% csrf_token %}
+            <tr>
+                <td>
+                    {{ item.name.name }}
+                </td>
+                <td>
+                    {{ item.count }}
+                </td>
+
+                    <td>
+                        {{ stock_form.as_p }}<button class="btn btn-success" style="width: 100px; height: 35px;" type="submit">Списать</button>
+                    </td>
+                    <td>
+                        {{ item.name.price }}{{ item.name.currency }}
+                    </td>
+            </tr>
+            </form>
+            {% endfor %}
+    </table>
+{% endblock %}

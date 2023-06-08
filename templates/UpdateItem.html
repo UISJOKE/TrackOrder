@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+  </div>
+</div>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+            <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+              </div>
+            </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<form class="form-horizontal"  style="position: center" method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+            <td colspan="2">
+                <button type="submit" style=" width: 152px" class="btn btn-group btn-success">Обновить</button>
+            </td>
+        </table>
+</form>
+{% endblock %}
